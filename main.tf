@@ -5,11 +5,6 @@ terraform {
         version = "~> 4.0"
       }
     }
-    backend "s3" {
-      bucket = "joes-cloud-resume-frontend-state-bucket"
-      key = "terraform-state"
-      region = "us-east-1"
-    }
 }
 
 provider "aws" {
@@ -40,4 +35,21 @@ module "cloudfront_distribution" {
   bucket_endpoint = module.s3_bucket.website_endpoint
   cert_arn = module.route53_acm.cert_arn
   domain_name = "joe-martinez.com"
+}
+
+module "dynamoDB" {
+  source = "./modules/aws-dynamoDB"
+}
+
+module "lambda_function" {
+  source = "./modules/lambda-function"
+
+  db_arn = module.dynamoDB.db_arn
+}
+
+module "API_gateway" {
+  source = "./modules/aws_api_gateway"
+
+  lambda_arn = module.lambda_function.lambda_invoke_arn
+  lambda_name = module.lambda_function.lambda_name
 }
