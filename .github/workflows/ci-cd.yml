@@ -1,0 +1,60 @@
+name: Terraform Lambda CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform init
+      run: terraform init
+
+    - name: Terraform validate
+      run: terraform validate
+
+    - name: Terraform plan
+      run: terraform plan
+
+    - name: Terraform apply
+      run: terraform apply -auto-approve
+
+  lambda:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: python -m unittest discover
+
+    - name: Package and deploy Lambda
+      run: |
+        # Package your Lambda function code
+        zip -r lambda.zip lambda_function.py
+
+        # Deploy the packaged Lambda function to AWS
+        aws lambda update-function-code --function-name PortfolioVisitorCounter --zip-file fileb://lambda.zip
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
