@@ -9,7 +9,6 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-  profile = "Terraform"
 }
 
 module "s3_back_end_state_bucket"{
