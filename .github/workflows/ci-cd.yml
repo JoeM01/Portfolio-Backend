@@ -12,17 +12,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    - name: Run tests
-      run: python -m unittest discover
-
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v1
 
@@ -42,14 +31,17 @@ jobs:
     - name: Confirm Terraform apply
       run: echo "Terraform apply completed successfully"
 
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
     - name: Package and deploy Lambda function
       run: |
-        cd lambda
-        pip install -r requirements.txt -t package
-        cp updateVisitorCounter.py package/
-        cd package
-        zip -r lambda_function_payload.zip .
-        aws lambda update-function-code --function-name YOUR_FUNCTION_NAME --zip-file fileb://lambda_function_payload.zip
+        cd \modules\lambda-function\src
+        pip install boto3
+        python -m unittest discover
+        aws lambda update-function-code --function-name updateVisitorCounter --zip-file fileb://function.zip
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
