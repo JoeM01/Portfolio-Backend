@@ -4,12 +4,13 @@ terraform {
         source = "hashicorp/aws"
         version = "~> 4.0"
       }
-      backend "s3" {
+      
+    }
+    backend "s3" {
         bucket         = "joes-portfolio-back-end-state-bucket"
         key            = "terraform-state"
         region         = "us-east-1"
       }
-    }
 }
 
 provider "aws" {
