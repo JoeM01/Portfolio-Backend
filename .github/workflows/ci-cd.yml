@@ -30,21 +30,3 @@ jobs:
 
     - name: Confirm Terraform apply
       run: echo "Terraform apply completed successfully"
-
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-
-    - name: Package and deploy Lambda function
-      run: |
-        cd \modules\lambda-function\src
-        pip install boto3
-        python -m unittest discover
-        aws lambda update-function-code --function-name updateVisitorCounter --zip-file fileb://function.zip
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    - name: Confirm Lambda deployment
-      run: echo "Lambda function deployed successfully"
