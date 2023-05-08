@@ -42,27 +42,3 @@ resource "aws_s3_bucket_website_configuration" "web_bucket" {
       suffix = "index.html"
     }
 }
-
-resource "aws_s3_object" "html"{
-    key = "index.html"
-    source = "modules/aws-s3-static-site/src/index.html"
-    bucket = aws_s3_bucket.bucket.id
-    etag = filemd5("modules/aws-s3-static-site/src/index.html")
-    content_type = "text/html"
-}
-
-resource "aws_s3_object" "css"{
-    key = "style.css"
-    source = "modules/aws-s3-static-site/src/style.css"
-    bucket = aws_s3_bucket.bucket.id
-    etag = filemd5("modules/aws-s3-static-site/src/style.css")
-    content_type = "text/css"
-}
-
-resource "aws_s3_object" "js"{
-    key = "counter.js"
-    source = "modules/aws-s3-static-site/src/counter.js"
-    bucket = aws_s3_bucket.bucket.id
-    etag = filemd5("modules/aws-s3-static-site/src/counter.js")
-    content_type = "application/x-javascript"
-}
